@@ -32,7 +32,6 @@ extern "C" {
     UINT AIAPI AIOReadChar(LPBYTE lpData);
     UINT AIAPI AIOReadShort(LPWORD lpData);
     UINT AIAPI AIOReadLong(LPDWORD lpData);
-    UINT AIAPI AIOReadCharM(LPBYTE lpData);
     UINT AIAPI AIOReadShortM(LPWORD lpData);
     UINT AIAPI AIOReadLongM(LPDWORD lpData);
 

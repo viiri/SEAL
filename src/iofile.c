@@ -12,8 +12,6 @@
  */
 
 #include <stdio.h>
-#include <limits.h>
-#include <malloc.h>
 #include <string.h>
 #include "audio.h"
 #include "iofile.h"

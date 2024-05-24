@@ -54,7 +54,8 @@ UINT AIAPI ALoadWaveFile(LPSTR lpszFileName,
     static CHUNKHEADER Chunk;
     static PCMWAVEFORMAT Fmt;
     LPAUDIOWAVE lpWave;
-    UINT n, nErrorCode;
+    DWORD n;
+    UINT nErrorCode;
 
     if (lplpWave == NULL) {
         return AUDIO_ERROR_INVALPARAM;

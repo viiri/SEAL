@@ -94,8 +94,8 @@ typedef struct {
 #define D (LONG)(12.0 * +0.6262992372690 * (1 << ACC))
 #define E (LONG)(12.0 * -0.0784753434027 * (1 << ACC))
 
-static LONG S3MGetRelativeNote(LONG dwSampleRate) {
-    LONG dwRelativeNote;
+static DWORD S3MGetRelativeNote(LONG dwSampleRate) {
+    DWORD dwRelativeNote;
 
     /*
      * Compute the relative note value given a sampling frequency:
@@ -117,7 +117,7 @@ static LONG S3MGetRelativeNote(LONG dwSampleRate) {
 }
 
 static UINT S3MDecodePattern(UINT nTracks, LPBYTE lpData, UINT nSize,
-                             BYTE aMappingTable[], LPAUDIOPATTERN lpPattern) {
+                             const BYTE aMappingTable[], LPAUDIOPATTERN lpPattern) {
     static S3MTRACKDATA aTrackTable[S3M_MAX_TRACKS];
     static BYTE aParamTable[S3M_MAX_TRACKS];
     UINT nRow, nTrack, nFlags, nNote, nSample, nVolume, nCommand, nParams;
@@ -532,7 +532,7 @@ UINT AIAPI ALoadModuleS3M(LPSTR lpszFileName,
     LPAUDIOPATTERN lpPattern;
     LPAUDIOPATCH lpPatch;
     LPAUDIOSAMPLE lpSample;
-    LONG dwRelativeNote;
+    DWORD dwRelativeNote;
     UINT n, nErrorCode;
 
     if (AIOOpenFile(lpszFileName)) {
@@ -728,7 +728,7 @@ UINT AIAPI ALoadModuleS3M(LPSTR lpszFileName,
             }
 
             /* load sample wavefrom data */
-            AIOSeekFile(((LONG) Sample.wDataSegPtr << 4) + dwFileOffset, SEEK_SET);
+            AIOSeekFile((Sample.wDataSegPtr << 4) + dwFileOffset, SEEK_SET);
             AIOReadFile(lpSample->Wave.lpData, lpSample->Wave.dwLength);
             S3MDecodeSample(lpSample->Wave.lpData, lpSample->Wave.dwLength);
             AWriteAudioData(&lpSample->Wave, 0, lpSample->Wave.dwLength);

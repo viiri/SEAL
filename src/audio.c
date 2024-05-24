@@ -24,6 +24,10 @@
 CHAR szAudioCopyright[] =
         "SEAL Synthetic Audio Library 1.07 (Build " __DATE__ ")\n"
         "Copyright (C) 1995, 1996, 1997, 1998, 1999 Carlos Hasan\n";
+#ifdef __SDL2__
+CHAR szSDL2AudioCopyright[] =
+        "SDL2 Audio Driver Copyright (C) 2024 by Sergei \"x0r\" Kolzun";
+#endif
 
 /*
  * Audio device drivers resource limits

@@ -62,7 +62,7 @@ typedef struct {
 
 
 static UINT MTMMakePattern(UINT nTracks, UINT nSeqTracks,
-                           LPAUDIOPATTERN lpPattern, WORD aPatSeqTable[32], LPMTMTRACK lpTrackTable) {
+                           LPAUDIOPATTERN lpPattern, const WORD aPatSeqTable[32], LPMTMTRACK lpTrackTable) {
     LPBYTE lpData, lpEvent;
     UINT nRowOfs, nTrack;
     UINT fFlags, nNote, nSample, nCommand, nParams;

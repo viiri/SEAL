@@ -43,10 +43,10 @@
  */
 typedef struct {
     LPVOID lpData;
-    LONG dwAccum;
+    DWORD dwAccum;
     LONG dwFrequency;
-    LONG dwLoopStart;
-    LONG dwLoopEnd;
+    DWORD dwLoopStart;
+    DWORD dwLoopEnd;
     BYTE nVolume;
     BYTE nPanning;
     BYTE bControl;
@@ -499,7 +499,7 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo) {
 
     /* allocate volume (0-64) and filter (0-31) table */
     Synth.lpMemory = malloc(sizeof(LONG) * 65 * 256 +
-                            sizeof(BYTE) * 32 * 256 + 1023);
+                            sizeof(BYTE) * 32 * 256);
     if (Synth.lpMemory != NULL) {
         lpVolumeTable = (LPLONG) Synth.lpMemory;
         lpFilterTable = (LPBYTE) (lpVolumeTable + 65 * 256);

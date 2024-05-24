@@ -173,7 +173,8 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
     LPAUDIOPATTERN lpPattern;
     LPAUDIOPATCH lpPatch;
     LPAUDIOSAMPLE lpSample;
-    UINT n, nErrorCode;
+    DWORD n;
+    UINT nErrorCode;
 
     if (AIOOpenFile(lpszFileName)) {
         return AUDIO_ERROR_FILENOTFOUND;
