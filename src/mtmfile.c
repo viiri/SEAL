@@ -27,66 +27,65 @@
  * MTM module header structure
  */
 typedef struct {
-    DWORD   dwMTM;
-    CHAR    szModuleName[20];
-    WORD    nSeqTracks;
-    BYTE    nPatterns;
-    BYTE    nOrders;
-    WORD    nMesgSize;
-    BYTE    nSamples;
-    BYTE    bFlags;
-    BYTE    nBeatsPerTrack;
-    BYTE    nChannels;
-    BYTE    aPanningTable[32];
+    DWORD dwMTM;
+    CHAR szModuleName[20];
+    WORD nSeqTracks;
+    BYTE nPatterns;
+    BYTE nOrders;
+    WORD nMesgSize;
+    BYTE nSamples;
+    BYTE bFlags;
+    BYTE nBeatsPerTrack;
+    BYTE nChannels;
+    BYTE aPanningTable[32];
 } MTMHEADER, *LPMTMHEADER;
 
 /*
  * MTM sample header structure
  */
 typedef struct {
-    CHAR    szSampleName[22];
-    DWORD   dwLength;
-    DWORD   dwLoopStart;
-    DWORD   dwLoopEnd;
-    BYTE    nFinetune;
-    BYTE    nVolume;
-    BYTE    bFlags;
+    CHAR szSampleName[22];
+    DWORD dwLength;
+    DWORD dwLoopStart;
+    DWORD dwLoopEnd;
+    BYTE nFinetune;
+    BYTE nVolume;
+    BYTE bFlags;
 } MTMSAMPLE, *LPMTMSAMPLE;
 
 /*
  * MTM track data structure
  */
 typedef struct {
-    BYTE    aData[3*64];
+    BYTE aData[3 * 64];
 } MTMTRACK, *LPMTMTRACK;
 
 
 static UINT MTMMakePattern(UINT nTracks, UINT nSeqTracks,
-			   LPAUDIOPATTERN lpPattern, WORD aPatSeqTable[32], LPMTMTRACK lpTrackTable)
-{
+                           LPAUDIOPATTERN lpPattern, WORD aPatSeqTable[32], LPMTMTRACK lpTrackTable) {
     LPBYTE lpData, lpEvent;
     UINT nRowOfs, nTrack;
     UINT fFlags, nNote, nSample, nCommand, nParams;
 
-    if ((lpData = (LPBYTE) malloc(64*5*nTracks)) == NULL)
+    if ((lpData = (LPBYTE) malloc(64 * 5 * nTracks)) == NULL)
         return AUDIO_ERROR_NOMEMORY;
 
     lpPattern->lpData = lpData;
     lpPattern->nPacking = 0;
     lpPattern->nTracks = nTracks;
     lpPattern->nRows = 64;
-    for (nRowOfs = 0; nRowOfs < 3*64; nRowOfs += 3) {
+    for (nRowOfs = 0; nRowOfs < 3 * 64; nRowOfs += 3) {
         for (nTrack = 0; nTrack < nTracks; nTrack++) {
             if (aPatSeqTable[nTrack] >= 1 &&
                 aPatSeqTable[nTrack] <= nSeqTracks) {
-                lpEvent = &lpTrackTable[aPatSeqTable[nTrack]-1].aData[nRowOfs];
+                lpEvent = &lpTrackTable[aPatSeqTable[nTrack] - 1].aData[nRowOfs];
                 nNote = (lpEvent[0] >> 2) & 0x3F;
                 nSample = ((lpEvent[0] & 0x03) << 4) | (lpEvent[1] >> 4);
                 nCommand = (lpEvent[1] & 0x0F);
                 nParams = lpEvent[2];
                 fFlags = AUDIO_PATTERN_PACKED;
                 if (nNote) {
-                    nNote += 12*2 + 1;
+                    nNote += 12 * 2 + 1;
                     fFlags |= AUDIO_PATTERN_NOTE;
                 }
                 if (nSample)
@@ -104,30 +103,28 @@ static UINT MTMMakePattern(UINT nTracks, UINT nSeqTracks,
                     *lpData++ = nCommand;
                 if (fFlags & AUDIO_PATTERN_PARAMS)
                     *lpData++ = nParams;
-            }
-            else {
+            } else {
                 *lpData++ = AUDIO_PATTERN_PACKED;
             }
         }
     }
 
     lpPattern->nSize = lpData - lpPattern->lpData;
-    if ((lpPattern->lpData = (LPBYTE) 
-	 realloc(lpPattern->lpData, lpPattern->nSize)) == NULL)
+    if ((lpPattern->lpData = (LPBYTE)
+            realloc(lpPattern->lpData, lpPattern->nSize)) == NULL)
         return AUDIO_ERROR_NOMEMORY;
 
     return AUDIO_ERROR_NONE;
 }
 
-static UINT MTMMakeSample(LPAUDIOPATCH lpPatch, LPMTMSAMPLE lpMTMSample)
-{
+static UINT MTMMakeSample(LPAUDIOPATCH lpPatch, LPMTMSAMPLE lpMTMSample) {
     LPAUDIOSAMPLE lpSample;
     LPBYTE lpData;
     DWORD dwCount;
     UINT rc;
 
     strncpy(lpPatch->szPatchName, lpMTMSample->szSampleName,
-	    sizeof(lpMTMSample->szSampleName));
+            sizeof(lpMTMSample->szSampleName));
     if (lpMTMSample->dwLength) {
         if ((lpSample = (LPAUDIOSAMPLE) calloc(1, sizeof(AUDIOSAMPLE))) == NULL)
             return AUDIO_ERROR_NOMEMORY;
@@ -157,9 +154,8 @@ static UINT MTMMakeSample(LPAUDIOPATCH lpPatch, LPMTMSAMPLE lpMTMSample)
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName, 
-			  LPAUDIOMODULE* lplpModule, DWORD dwFileOffset)
-{
+UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
+                          LPAUDIOMODULE *lplpModule, DWORD dwFileOffset) {
     LPAUDIOMODULE lpModule;
     static MTMHEADER Header;
     LPMTMSAMPLE lpSampleTable;
@@ -192,8 +188,8 @@ UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
 
     /* check MTM file header signature and other fields */
     if ((Header.dwMTM & MTM_SIGN_MASK) != MTM_SIGN_PATTERN ||
-/***    (Header.nPatterns > AUDIO_MAX_PATTERNS) ||   FIX: avoid warnings ***/
-/***    (Header.nOrders > AUDIO_MAX_ORDERS) ||       FIX: avoid warnings ***/
+        /***    (Header.nPatterns > AUDIO_MAX_PATTERNS) ||   FIX: avoid warnings ***/
+        /***    (Header.nOrders > AUDIO_MAX_ORDERS) ||       FIX: avoid warnings ***/
         (Header.nSamples > AUDIO_MAX_PATCHES) ||
         (Header.nChannels > AUDIO_MAX_VOICES) ||
         (Header.nBeatsPerTrack != 64)) {
@@ -204,7 +200,7 @@ UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
 
     /* build the local module header structure */
     strncpy(lpModule->szModuleName, Header.szModuleName,
-	    sizeof(Header.szModuleName));
+            sizeof(Header.szModuleName));
     lpModule->wFlags = AUDIO_MODULE_AMIGA | AUDIO_MODULE_PANNING;
     lpModule->nOrders = Header.nOrders + 1;
     lpModule->nRestart = AUDIO_MAX_ORDERS;
@@ -219,27 +215,27 @@ UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
 
     /* allocate space for local patterns and patches */
     if ((lpModule->aPatternTable = (LPAUDIOPATTERN)
-	 calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
+            calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
     }
     if ((lpModule->aPatchTable = (LPAUDIOPATCH)
-	 calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
+            calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
     }
 
     /* allocate space for MTM samples and track structures */
-    if ((lpSampleTable = (LPMTMSAMPLE) 
-	 calloc(Header.nSamples, sizeof(MTMSAMPLE))) == NULL) {
+    if ((lpSampleTable = (LPMTMSAMPLE)
+            calloc(Header.nSamples, sizeof(MTMSAMPLE))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
     }
     if ((lpTrackTable = (LPMTMTRACK)
-	 calloc(Header.nSeqTracks, sizeof(MTMTRACK))) == NULL) {
+            calloc(Header.nSeqTracks, sizeof(MTMTRACK))) == NULL) {
         free(lpSampleTable);
         AFreeModuleFile(lpModule);
         AIOCloseFile();
@@ -248,8 +244,8 @@ UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
 
     /* load MTM sample header structures */
     for (n = 0; n < lpModule->nPatches; n++) {
-        AIOReadFile(lpSampleTable[n].szSampleName, 
-		    sizeof(lpSampleTable[n].szSampleName));
+        AIOReadFile(lpSampleTable[n].szSampleName,
+                    sizeof(lpSampleTable[n].szSampleName));
         AIOReadLong(&lpSampleTable[n].dwLength);
         AIOReadLong(&lpSampleTable[n].dwLoopStart);
         AIOReadLong(&lpSampleTable[n].dwLoopEnd);
@@ -268,7 +264,7 @@ UINT AIAPI ALoadModuleMTM(LPSTR lpszFileName,
     for (n = 0; n < lpModule->nPatterns; n++) {
         AIOReadFile(aPatSeqTable, sizeof(aPatSeqTable));
         rc = MTMMakePattern(lpModule->nTracks, Header.nSeqTracks,
-			    &lpModule->aPatternTable[n], aPatSeqTable, lpTrackTable);
+                            &lpModule->aPatternTable[n], aPatSeqTable, lpTrackTable);
         if (rc != AUDIO_ERROR_NONE) {
             free(lpTrackTable);
             free(lpSampleTable);

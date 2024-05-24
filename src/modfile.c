@@ -16,26 +16,25 @@
 #include "audio.h"
 #include "iofile.h"
 
-
 /*
  * Protracker module file structures
  */
 typedef struct {
-    CHAR    aSampleName[22];
-    WORD    wLength;
-    BYTE    nFinetune;
-    BYTE    nVolume;
-    WORD    wLoopStart;
-    WORD    wLoopLength;
+    CHAR aSampleName[22];
+    WORD wLength;
+    BYTE nFinetune;
+    BYTE nVolume;
+    WORD wLoopStart;
+    WORD wLoopLength;
 } MODSAMPLEHEADER;
 
 typedef struct {
-    CHAR    aModuleName[20];
+    CHAR aModuleName[20];
     MODSAMPLEHEADER aSampleTable[31];
-    BYTE    nSongLength;
-    BYTE    nRestart;
-    BYTE    aOrderTable[128];
-    CHAR    aMagic[4];
+    BYTE nSongLength;
+    BYTE nRestart;
+    BYTE aOrderTable[128];
+    CHAR aMagic[4];
 } MODFILEHEADER;
 
 
@@ -58,8 +57,8 @@ static WORD aMODPeriodTable[96] =
  * Protracker module header signatures table
  */
 static struct {
-    CHAR    aMagic[4];
-    UINT    nTracks;
+    CHAR aMagic[4];
+    UINT nTracks;
 } aFmtTable[] = {
     { "M.K.",  4 }, { "M!K!",  4 },
     { "M&K!",  4 }, { "OCTA",  4 },
@@ -77,8 +76,7 @@ static struct {
 /*
  * Protracker module file loader routines
  */
-static UINT MODGetNoteValue(UINT nPeriod)
-{
+static UINT MODGetNoteValue(UINT nPeriod) {
     UINT nNote;
 
     if (nPeriod != 0) {
@@ -89,8 +87,7 @@ static UINT MODGetNoteValue(UINT nPeriod)
     return 0;
 }
 
-static UINT MODLoadPattern(UINT nTracks, LPAUDIOPATTERN lpPattern)
-{
+static UINT MODLoadPattern(UINT nTracks, LPAUDIOPATTERN lpPattern) {
     UINT nSize, fPacking, nNote, nSample, nCommand, nParams;
     LPBYTE lpData, lpFTData;
 
@@ -119,15 +116,15 @@ static UINT MODLoadPattern(UINT nTracks, LPAUDIOPATTERN lpPattern)
 
         /* remove some dummy MOD command effects */
         switch ((nCommand << 8) + nParams) {
-        case 0x100:
-        case 0x200:
-        case 0xA00:
-        case 0xE10:
-        case 0xE20:
-        case 0xEA0:
-        case 0xEB0:
-            nCommand = nParams = 0x00;
-            break;
+            case 0x100:
+            case 0x200:
+            case 0xA00:
+            case 0xE10:
+            case 0xE20:
+            case 0xEA0:
+            case 0xEB0:
+                nCommand = nParams = 0x00;
+                break;
         }
 
         /* convert DMP-style panning command */
@@ -168,9 +165,8 @@ static UINT MODLoadPattern(UINT nTracks, LPAUDIOPATTERN lpPattern)
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName, 
-			  LPAUDIOMODULE *lplpModule, DWORD dwFileOffset)
-{
+UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
+                          LPAUDIOMODULE *lplpModule, DWORD dwFileOffset) {
     static MODFILEHEADER Header;
     static MODSAMPLEHEADER Sample;
     LPAUDIOMODULE lpModule;
@@ -193,7 +189,7 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
     AIOReadFile(Header.aModuleName, sizeof(Header.aModuleName));
     for (n = 0; n < 31; n++) {
         AIOReadFile(Header.aSampleTable[n].aSampleName,
-		    sizeof(Header.aSampleTable[n].aSampleName));
+                    sizeof(Header.aSampleTable[n].aSampleName));
         AIOReadShortM(&Header.aSampleTable[n].wLength);
         AIOReadCharM(&Header.aSampleTable[n].nFinetune);
         AIOReadCharM(&Header.aSampleTable[n].nVolume);
@@ -218,7 +214,7 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
 
     /* initialize the module structure */
     strncpy(lpModule->szModuleName, Header.aModuleName,
-	    sizeof(Header.aModuleName));
+            sizeof(Header.aModuleName));
     lpModule->wFlags = AUDIO_MODULE_AMIGA | AUDIO_MODULE_PANNING;
     lpModule->nOrders = Header.nSongLength;
     lpModule->nRestart = Header.nRestart;
@@ -233,16 +229,16 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
     lpModule->nPatterns++;
     for (n = 0; n < lpModule->nTracks; n++) {
         lpModule->aPanningTable[n] =
-            ((n & 3) == 0 || (n & 3) == 3) ? 0x00 : 0xFF;
+                ((n & 3) == 0 || (n & 3) == 3) ? 0x00 : 0xFF;
     }
     if ((lpModule->aPatternTable = (LPAUDIOPATTERN)
-	 calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
+            calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
     }
     if ((lpModule->aPatchTable = (LPAUDIOPATCH)
-	 calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
+            calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
@@ -263,10 +259,10 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
     for (n = 0; n < lpModule->nPatches; n++, lpPatch++) {
         memcpy(&Sample, &Header.aSampleTable[n], sizeof(MODSAMPLEHEADER));
         strncpy(lpPatch->szPatchName, Sample.aSampleName,
-		sizeof(Sample.aSampleName));
+                sizeof(Sample.aSampleName));
         if (Sample.wLength != 0) {
             if ((lpSample = (LPAUDIOSAMPLE)
-		 calloc(1, sizeof(AUDIOSAMPLE))) == NULL) {
+                    calloc(1, sizeof(AUDIOSAMPLE))) == NULL) {
                 AFreeModuleFile(lpModule);
                 AIOCloseFile();
                 return AUDIO_ERROR_NOMEMORY;

@@ -16,7 +16,7 @@
 #include <string.h>
 #include "audio.h"
 
-#if defined(__DOS16__) || defined(__DPMI__) || defined(__WINDOWS__)
+#if defined(__WINDOWS__)
 #include <conio.h>
 #else
 #define kbhit() 0
@@ -54,41 +54,13 @@ void __cdecl CleanUp(void)
 void Banner(void)
 {
 
-/* BeOS R3 */
-#ifdef __BEOS__
-#define _SYSTEM_ "BeOS"
-#endif
-/* OS/2 MMPM */
-#ifdef __OS2__
-#define _SYSTEM_ "OS/2 MMPM"
-#endif
 /* Linux/386 */
 #ifdef __LINUX__
 #define _SYSTEM_ "Linux"
 #endif
 
-/* FreeBSD/386 */
-#ifdef __FREEBSD__
-#define _SYSTEM_ "FreeBSD"
-#endif
-
-/* SunOS 4.1.x */
-#ifdef __SPARC__
-#define _SYSTEM_ "SPARC/SunOS"
-#endif
-
-/* Solaris 2.x */
-#ifdef __SOLARIS__
-#define _SYSTEM_ "SPARC/Solaris"
-#endif
-
-/* IRIX 4.x */
-#ifdef __SILICON__
-#define _SYSTEM_ "SGI/Irix"
-#endif
-
 /* Win32 */
-#if defined(__WINDOWS__) && defined(__FLAT__)
+#if defined(__WINDOWS__)
 #ifdef __BORLANDC__
 #define _SYSTEM_ "Win32/BC32"
 #endif
@@ -97,46 +69,6 @@ void Banner(void)
 #endif
 #ifdef __MSC__
 #define _SYSTEM_ "Win32/MSC32"
-#endif
-#endif
-
-/* Win16 */
-#if defined(__WINDOWS__) && defined(__LARGE__)
-#ifdef __BORLANDC__
-#define _SYSTEM_ "Win16/BC16"
-#endif
-#ifdef __WATCOMC__
-#define _SYSTEM_ "Win16/WC16"
-#endif
-#endif
-
-/* DPMI32 */
-#if defined(__DPMI__) && defined(__FLAT__)
-#ifdef __BORLANDC__
-#define _SYSTEM_ "DPMI32/BC32"
-#endif
-#ifdef __WATCOMC__
-#define _SYSTEM_ "DOS4GW/WC32"
-#endif
-#endif
-#if defined(__DPMI__) && defined(__DJGPP__)
-#define _SYSTEM_ "DPMI32/DJGPP"
-#endif
-
-/* DPMI16 */
-#if defined(__DPMI__) && defined(__LARGE__)
-#ifdef __BORLANDC__
-#define _SYSTEM_ "DPMI16/BC16"
-#endif
-#endif
-
-/* DOS */
-#if defined(__DOS16__) && defined(__LARGE__)
-#ifdef __BORLANDC__
-#define _SYSTEM_ "DOS/BC16"
-#endif
-#ifdef __WATCOMC__
-#define _SYSTEM_ "DOS/WC16"
 #endif
 #endif
 
@@ -238,7 +170,7 @@ int main(int argc, char *argv[])
         Assert(AOpenVoices(State.lpModule->nTracks));
         Assert(APlayModule(State.lpModule));
         Assert(ASetAudioMixerValue(AUDIO_MIXER_MASTER_VOLUME, State.nVolume));
-#if defined(__WINDOWS__) || defined(__BEOS__)
+#if defined(__WINDOWS__)
         printf("Press enter to quit\n");
         getchar();
 #else

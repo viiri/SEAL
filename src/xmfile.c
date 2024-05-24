@@ -18,7 +18,6 @@
 #include "audio.h"
 #include "iofile.h"
 
-
 /*
  * Extended module file structures
  */
@@ -36,76 +35,75 @@
 #define XM_SAMPLE_16BITS        0x0010
 
 typedef struct {
-    CHAR    aIdText[17];
-    CHAR    aModuleName[20];
-    BYTE    bPadding;
-    CHAR    aTrackerName[20];
-    WORD    wVersion;
-    DWORD   dwHeaderSize;
-    WORD    nSongLength;
-    WORD    nRestart;
-    WORD    nTracks;
-    WORD    nPatterns;
-    WORD    nPatches;
-    WORD    wFlags;
-    WORD    nTempo;
-    WORD    nBPM;
-    BYTE    aOrderTable[256];
+    CHAR aIdText[17];
+    CHAR aModuleName[20];
+    BYTE bPadding;
+    CHAR aTrackerName[20];
+    WORD wVersion;
+    DWORD dwHeaderSize;
+    WORD nSongLength;
+    WORD nRestart;
+    WORD nTracks;
+    WORD nPatterns;
+    WORD nPatches;
+    WORD wFlags;
+    WORD nTempo;
+    WORD nBPM;
+    BYTE aOrderTable[256];
 } XMFILEHEADER;
 
 typedef struct {
-    DWORD   dwHeaderSize;
-    BYTE    nPacking;
-    WORD    nRows;
-    WORD    nSize;
+    DWORD dwHeaderSize;
+    BYTE nPacking;
+    WORD nRows;
+    WORD nSize;
 } XMPATTERNHEADER;
 
 typedef struct {
-    DWORD   dwHeaderSize;
-    CHAR    aPatchName[22];
-    BYTE    nType;
-    WORD    nSamples;
-    DWORD   dwSampleHeaderSize;
-    BYTE    aSampleNumber[96];
-    DWORD   aVolumeEnvelope[12];
-    DWORD   aPanningEnvelope[12];
-    BYTE    nVolumePoints;
-    BYTE    nPanningPoints;
-    BYTE    nVolumeSustain;
-    BYTE    nVolumeLoopStart;
-    BYTE    nVolumeLoopEnd;
-    BYTE    nPanningSustain;
-    BYTE    nPanningLoopStart;
-    BYTE    nPanningLoopEnd;
-    BYTE    bVolumeFlags;
-    BYTE    bPanningFlags;
-    BYTE    nVibratoType;
-    BYTE    nVibratoSweep;
-    BYTE    nVibratoDepth;
-    BYTE    nVibratoRate;
-    WORD    nVolumeFadeout;
-    WORD    wReserved;
+    DWORD dwHeaderSize;
+    CHAR aPatchName[22];
+    BYTE nType;
+    WORD nSamples;
+    DWORD dwSampleHeaderSize;
+    BYTE aSampleNumber[96];
+    DWORD aVolumeEnvelope[12];
+    DWORD aPanningEnvelope[12];
+    BYTE nVolumePoints;
+    BYTE nPanningPoints;
+    BYTE nVolumeSustain;
+    BYTE nVolumeLoopStart;
+    BYTE nVolumeLoopEnd;
+    BYTE nPanningSustain;
+    BYTE nPanningLoopStart;
+    BYTE nPanningLoopEnd;
+    BYTE bVolumeFlags;
+    BYTE bPanningFlags;
+    BYTE nVibratoType;
+    BYTE nVibratoSweep;
+    BYTE nVibratoDepth;
+    BYTE nVibratoRate;
+    WORD nVolumeFadeout;
+    WORD wReserved;
 } XMPATCHHEADER;
 
 typedef struct {
-    DWORD   dwLength;
-    DWORD   dwLoopStart;
-    DWORD   dwLoopLength;
-    BYTE    nVolume;
-    BYTE    nFinetune;
-    BYTE    bFlags;
-    BYTE    nPanning;
-    BYTE    nRelativeNote;
-    BYTE    bReserved;
-    CHAR    aSampleName[22];
+    DWORD dwLength;
+    DWORD dwLoopStart;
+    DWORD dwLoopLength;
+    BYTE nVolume;
+    BYTE nFinetune;
+    BYTE bFlags;
+    BYTE nPanning;
+    BYTE nRelativeNote;
+    BYTE bReserved;
+    CHAR aSampleName[22];
 } XMSAMPLEHEADER;
 
 
 /*
  * Extended module loader routines
  */
-static VOID XMDecodeSamples(LPAUDIOWAVE lpWave)
-{
+static VOID XMDecodeSamples(LPAUDIOWAVE lpWave) {
     LPWORD lpwCode;
     LPBYTE lpbCode;
     UINT nDelta, nCount;
@@ -121,8 +119,7 @@ static VOID XMDecodeSamples(LPAUDIOWAVE lpWave)
 #endif
             nDelta = *lpwCode++ += nDelta;
         }
-    }
-    else {
+    } else {
         lpbCode = (LPBYTE) lpWave->lpData;
         while (nCount--) {
             nDelta = (BYTE) (*lpbCode++ += (BYTE) nDelta);
@@ -130,9 +127,8 @@ static VOID XMDecodeSamples(LPAUDIOWAVE lpWave)
     }
 }
 
-UINT AIAPI ALoadModuleXM(LPSTR lpszFileName, 
-			 LPAUDIOMODULE *lplpModule, DWORD dwFileOffset)
-{
+UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
+                         LPAUDIOMODULE *lplpModule, DWORD dwFileOffset) {
     static XMFILEHEADER Header;
     static XMPATTERNHEADER Pattern;
     static XMPATCHHEADER Patch;
@@ -184,7 +180,7 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
 
     /* initialize module structure */
     strncpy(lpModule->szModuleName, Header.aModuleName,
-	    sizeof(Header.aModuleName));
+            sizeof(Header.aModuleName));
     if (Header.wFlags & XM_MODULE_LINEAR)
         lpModule->wFlags |= AUDIO_MODULE_LINEAR;
     lpModule->nOrders = Header.nSongLength;
@@ -198,17 +194,17 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
         lpModule->aOrderTable[n] = Header.aOrderTable[n];
     }
     for (n = 0; n < lpModule->nTracks; n++) {
-        lpModule->aPanningTable[n] = (AUDIO_MIN_PANNING + AUDIO_MAX_PANNING)/2;
+        lpModule->aPanningTable[n] = (AUDIO_MIN_PANNING + AUDIO_MAX_PANNING) / 2;
     }
 
     if ((lpModule->aPatternTable = (LPAUDIOPATTERN)
-	 calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
+            calloc(lpModule->nPatterns, sizeof(AUDIOPATTERN))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
     }
     if ((lpModule->aPatchTable = (LPAUDIOPATCH)
-	 calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
+            calloc(lpModule->nPatches, sizeof(AUDIOPATCH))) == NULL) {
         AFreeModuleFile(lpModule);
         AIOCloseFile();
         return AUDIO_ERROR_NOMEMORY;
@@ -281,8 +277,8 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
         AIOSeekFile(Patch.dwHeaderSize - XM_PATCH_HEADER_SIZE, SEEK_CUR);
 
         /* HACK: clamp envelope's number of points (12/12/96) */
-	if (Patch.nVolumePoints > AUDIO_MAX_POINTS)
-	    Patch.nVolumePoints = AUDIO_MAX_POINTS;
+        if (Patch.nVolumePoints > AUDIO_MAX_POINTS)
+            Patch.nVolumePoints = AUDIO_MAX_POINTS;
         if (Patch.nPanningPoints > AUDIO_MAX_POINTS)
             Patch.nPanningPoints = AUDIO_MAX_POINTS;
 
@@ -296,7 +292,7 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
 
         /* initialize patch structure */
         strncpy(lpPatch->szPatchName, Patch.aPatchName,
-		sizeof(Patch.aPatchName));
+                sizeof(Patch.aPatchName));
         for (m = 0; m < AUDIO_MAX_NOTES; m++) {
             lpPatch->aSampleNumber[m] = Patch.aSampleNumber[m];
             if (lpPatch->aSampleNumber[m] >= Patch.nSamples)
@@ -320,9 +316,9 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
             lpPatch->Volume.wFlags |= AUDIO_ENVELOPE_LOOP;
         for (m = 0; m < lpPatch->Volume.nPoints; m++) {
             lpPatch->Volume.aEnvelope[m].nFrame =
-                LOWORD(Patch.aVolumeEnvelope[m]);
+                    LOWORD(Patch.aVolumeEnvelope[m]);
             lpPatch->Volume.aEnvelope[m].nValue =
-                HIWORD(Patch.aVolumeEnvelope[m]);
+                    HIWORD(Patch.aVolumeEnvelope[m]);
         }
         lpPatch->Panning.nPoints = Patch.nPanningPoints;
         lpPatch->Panning.nSustain = Patch.nPanningSustain;
@@ -336,13 +332,13 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
             lpPatch->Panning.wFlags |= AUDIO_ENVELOPE_LOOP;
         for (m = 0; m < lpPatch->Panning.nPoints; m++) {
             lpPatch->Panning.aEnvelope[m].nFrame =
-                LOWORD(Patch.aPanningEnvelope[m]);
+                    LOWORD(Patch.aPanningEnvelope[m]);
             lpPatch->Panning.aEnvelope[m].nValue =
-                HIWORD(Patch.aPanningEnvelope[m]);
+                    HIWORD(Patch.aPanningEnvelope[m]);
         }
         if (lpPatch->nSamples != 0) {
             if ((lpPatch->aSampleTable = (LPAUDIOSAMPLE)
-		 calloc(lpPatch->nSamples, sizeof(AUDIOSAMPLE))) == NULL) {
+                    calloc(lpPatch->nSamples, sizeof(AUDIOSAMPLE))) == NULL) {
                 AFreeModuleFile(lpModule);
                 AIOCloseFile();
                 return AUDIO_ERROR_NOMEMORY;
@@ -363,9 +359,9 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
             AIOReadChar(&Sample.bReserved);
             AIOReadFile(Sample.aSampleName, sizeof(Sample.aSampleName));
             AIOSeekFile(Patch.dwSampleHeaderSize -
-			XM_SAMPLE_HEADER_SIZE, SEEK_CUR);
+                        XM_SAMPLE_HEADER_SIZE, SEEK_CUR);
             strncpy(lpSample->szSampleName, Sample.aSampleName,
-		    sizeof(Sample.aSampleName));
+                    sizeof(Sample.aSampleName));
             lpSample->Wave.dwLength = Sample.dwLength;
             lpSample->Wave.dwLoopStart = Sample.dwLoopStart;
             lpSample->Wave.dwLoopEnd = Sample.dwLoopStart + Sample.dwLoopLength;

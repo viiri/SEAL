@@ -17,7 +17,6 @@
 #include "audio.h"
 #include "iofile.h"
 
-
 /*
  * Windows RIFF/WAVE PCM file structures
  */
@@ -30,29 +29,27 @@
 #define WAVE_FORMAT_PCM     1
 
 typedef struct {
-    WORD    wFormatTag;
-    WORD    nChannels;
-    DWORD   nSamplesPerSec;
-    DWORD   nAvgBytesPerSec;
-    WORD    nBlockAlign;
-    WORD    wBitsPerSample;
+    WORD wFormatTag;
+    WORD nChannels;
+    DWORD nSamplesPerSec;
+    DWORD nAvgBytesPerSec;
+    WORD nBlockAlign;
+    WORD wBitsPerSample;
 } PCMWAVEFORMAT;
 
 typedef struct {
-    DWORD   fccId;
-    DWORD   dwSize;
+    DWORD fccId;
+    DWORD dwSize;
 } CHUNKHEADER;
 
 typedef struct {
-    DWORD   fccId;
-    DWORD   dwSize;
-    DWORD   fccType;
+    DWORD fccId;
+    DWORD dwSize;
+    DWORD fccType;
 } RIFFHEADER;
 
-
-UINT AIAPI ALoadWaveFile(LPSTR lpszFileName, 
-			 LPAUDIOWAVE* lplpWave, DWORD dwFileOffset)
-{
+UINT AIAPI ALoadWaveFile(LPSTR lpszFileName,
+                         LPAUDIOWAVE *lplpWave, DWORD dwFileOffset) {
     static RIFFHEADER Header;
     static CHUNKHEADER Chunk;
     static PCMWAVEFORMAT Fmt;
@@ -102,8 +99,7 @@ UINT AIAPI ALoadWaveFile(LPSTR lpszFileName,
             AIOReadShort(&Fmt.nBlockAlign);
             AIOReadShort(&Fmt.wBitsPerSample);
             AIOSeekFile(Chunk.dwSize - sizeof(Fmt), SEEK_CUR);
-        }
-        else if (Chunk.fccId == FOURCC_DATA) {
+        } else if (Chunk.fccId == FOURCC_DATA) {
             /* read RIFF/WAVE data chunk */
             if (Fmt.wFormatTag != WAVE_FORMAT_PCM) {
                 AIOCloseFile();
@@ -131,8 +127,7 @@ UINT AIAPI ALoadWaveFile(LPSTR lpszFileName,
             AIOCloseFile();
             *lplpWave = lpWave;
             return AUDIO_ERROR_NONE;
-        }
-        else {
+        } else {
             /* skip unknown RIFF/WAVE chunks */
             AIOSeekFile(Chunk.dwSize, SEEK_CUR);
         }
@@ -142,9 +137,7 @@ UINT AIAPI ALoadWaveFile(LPSTR lpszFileName,
     return AUDIO_ERROR_BADFILEFORMAT;
 }
 
-
-UINT AIAPI AFreeWaveFile(LPAUDIOWAVE lpWave)
-{
+UINT AIAPI AFreeWaveFile(LPAUDIOWAVE lpWave) {
     UINT rc;
     rc = ADestroyAudioData(lpWave);  /*** FIX: 04/12/98 ***/
     free(lpWave);

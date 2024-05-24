@@ -16,6 +16,7 @@ add_library(seal)
 add_library(SEAL::seal ALIAS seal)
 
 target_include_directories(seal PUBLIC include)
+set_target_properties(seal PROPERTIES PUBLIC_HEADER include/audio.h)
 
 target_sources(seal PRIVATE
         src/audio.c
@@ -50,7 +51,7 @@ if(WIN32)
 
     if(BUILD_SHARED_LIBS)
         set_target_properties(seal PROPERTIES OUTPUT_NAME audiow32)
-        target_sources(seal PRIVATE src/Windows/Win32/VisualC/audiow32.def)
+        target_sources(seal PRIVATE src/audiow32.def)
         target_sources(seal PRIVATE src/audiow32.c)
     endif()
 

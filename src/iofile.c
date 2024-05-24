@@ -23,42 +23,36 @@
  */
 static FILE *lpStream;
 
-UINT AIAPI AIOOpenFile(LPSTR lpszFileName)
-{
+UINT AIAPI AIOOpenFile(LPSTR lpszFileName) {
     if ((lpStream = fopen(lpszFileName, "rb")) != NULL)
         return AUDIO_ERROR_NONE;
     return AUDIO_ERROR_FILENOTFOUND;
 }
 
-UINT AIAPI AIOCloseFile(VOID)
-{
+UINT AIAPI AIOCloseFile(VOID) {
     fclose(lpStream);
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOSeekFile(LONG dwOffset, UINT nWhere)
-{
+UINT AIAPI AIOSeekFile(LONG dwOffset, UINT nWhere) {
     fseek(lpStream, dwOffset, nWhere);
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOReadFile(LPVOID lpData, UINT nSize)
-{
+UINT AIAPI AIOReadFile(LPVOID lpData, UINT nSize) {
     if (fread(lpData, 1, nSize, lpStream) != nSize)
         memset(lpData, 0, nSize);
     return AUDIO_ERROR_NONE;
 }
 
 /* little-endian input routines */
-UINT AIAPI AIOReadChar(LPBYTE lpData)
-{
+UINT AIAPI AIOReadChar(LPBYTE lpData) {
     if (fread(lpData, 1, sizeof(BYTE), lpStream) != sizeof(BYTE))
         memset(lpData, 0, sizeof(BYTE));
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOReadShort(LPWORD lpData)
-{
+UINT AIAPI AIOReadShort(LPWORD lpData) {
     if (fread(lpData, 1, sizeof(WORD), lpStream) != sizeof(WORD))
         memset(lpData, 0, sizeof(WORD));
 #ifdef __BIGENDIAN__
@@ -67,28 +61,25 @@ UINT AIAPI AIOReadShort(LPWORD lpData)
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOReadLong(LPDWORD lpData)
-{
+UINT AIAPI AIOReadLong(LPDWORD lpData) {
     if (fread(lpData, 1, sizeof(DWORD), lpStream) != sizeof(DWORD))
         memset(lpData, 0, sizeof(DWORD));
 #ifdef __BIGENDIAN__
     *lpData = MAKELONG(
         MAKEWORD(HIBYTE(HIWORD(*lpData)), LOBYTE(HIWORD(*lpData))),
-	MAKEWORD(HIBYTE(LOWORD(*lpData)), LOBYTE(LOWORD(*lpData))));
+    MAKEWORD(HIBYTE(LOWORD(*lpData)), LOBYTE(LOWORD(*lpData))));
 #endif
     return AUDIO_ERROR_NONE;
 }
 
 /* big-endian input routines */
-UINT AIAPI AIOReadCharM(LPBYTE lpData)
-{
+UINT AIAPI AIOReadCharM(LPBYTE lpData) {
     if (fread(lpData, 1, sizeof(BYTE), lpStream) != sizeof(BYTE))
         memset(lpData, 0, sizeof(BYTE));
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOReadShortM(LPWORD lpData)
-{
+UINT AIAPI AIOReadShortM(LPWORD lpData) {
     if (fread(lpData, 1, sizeof(WORD), lpStream) != sizeof(WORD))
         memset(lpData, 0, sizeof(WORD));
 #ifndef __BIGENDIAN__
@@ -97,14 +88,13 @@ UINT AIAPI AIOReadShortM(LPWORD lpData)
     return AUDIO_ERROR_NONE;
 }
 
-UINT AIAPI AIOReadLongM(LPDWORD lpData)
-{
+UINT AIAPI AIOReadLongM(LPDWORD lpData) {
     if (fread(lpData, 1, sizeof(DWORD), lpStream) != sizeof(DWORD))
         memset(lpData, 0, sizeof(DWORD));
 #ifndef __BIGENDIAN__
     *lpData = MAKELONG(
-        MAKEWORD(HIBYTE(HIWORD(*lpData)), LOBYTE(HIWORD(*lpData))),
-	MAKEWORD(HIBYTE(LOWORD(*lpData)), LOBYTE(LOWORD(*lpData))));
+            MAKEWORD(HIBYTE(HIWORD(*lpData)), LOBYTE(HIWORD(*lpData))),
+            MAKEWORD(HIBYTE(LOWORD(*lpData)), LOBYTE(LOWORD(*lpData))));
 #endif
     return AUDIO_ERROR_NONE;
 }

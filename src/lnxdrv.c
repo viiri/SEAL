@@ -16,15 +16,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+
 #ifdef __LINUX__
 #include <linux/soundcard.h>
 #endif
-#ifdef __FREEBSD__
-#include <machine/soundcard.h>
-#endif
+
 #include "audio.h"
 #include "drivers.h"
-
 
 /*
  * Linux driver buffer fragments defines
@@ -37,18 +35,17 @@
  * Linux driver configuration structure
  */
 static struct {
-    int     nHandle;
-    BYTE    aBuffer[BUFFERSIZE];
+    int nHandle;
+    BYTE aBuffer[BUFFERSIZE];
     LPFNAUDIOWAVE lpfnAudioWave;
-    WORD    wFormat;
+    WORD wFormat;
 } Audio;
 
 
 /*
  * Linux driver API interface
  */
-static UINT AIAPI GetAudioCaps(LPAUDIOCAPS lpCaps)
-{
+static UINT AIAPI GetAudioCaps(LPAUDIOCAPS lpCaps) {
     static AUDIOCAPS Caps =
     {
         AUDIO_PRODUCT_LINUX, "Linux Voxware",
@@ -64,13 +61,11 @@ static UINT AIAPI GetAudioCaps(LPAUDIOCAPS lpCaps)
     return AUDIO_ERROR_NONE;
 }
 
-static UINT AIAPI PingAudio(VOID)
-{
+static UINT AIAPI PingAudio(VOID) {
     return access("/dev/dsp", W_OK) ? AUDIO_ERROR_NODEVICE : AUDIO_ERROR_NONE;
 }
 
-static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
-{
+static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo) {
     int nBitsPerSample, nStereoOn, nSampleRate, nFrags;
 
     memset(&Audio, 0, sizeof(Audio));
@@ -98,15 +93,13 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
     return AUDIO_ERROR_NONE;
 }
 
-static UINT AIAPI CloseAudio(VOID)
-{
+static UINT AIAPI CloseAudio(VOID) {
     /* close DSP audio device */
     close(Audio.nHandle);
     return AUDIO_ERROR_NONE;
 }
 
-static UINT AIAPI UpdateAudio(UINT nFrames)
-{
+static UINT AIAPI UpdateAudio(UINT nFrames) {
     /* compute frame size */
     if (Audio.wFormat & AUDIO_FORMAT_16BITS) nFrames <<= 1;
     if (Audio.wFormat & AUDIO_FORMAT_STEREO) nFrames <<= 1;
@@ -121,8 +114,7 @@ static UINT AIAPI UpdateAudio(UINT nFrames)
     return AUDIO_ERROR_NONE;
 }
 
-static UINT AIAPI SetAudioCallback(LPFNAUDIOWAVE lpfnAudioWave)
-{
+static UINT AIAPI SetAudioCallback(LPFNAUDIOWAVE lpfnAudioWave) {
     /* set up DSP audio device user's callback function */
     Audio.lpfnAudioWave = lpfnAudioWave;
     return AUDIO_ERROR_NONE;
