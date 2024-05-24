@@ -240,7 +240,7 @@ UINT AIAPI ACloseVoices(VOID) {
     UINT nVoice;
 
     for (nVoice = 0; nVoice < nNumVoices; nVoice++) {
-        if (aVoiceTable[nVoice] != (HAC) NULL)
+        if (aVoiceTable[nVoice] != 0)
             return AUDIO_ERROR_NOTSUPPORTED;
     }
     nNumVoices = 0;
@@ -290,8 +290,7 @@ UINT AIAPI ADestroyAudioData(LPAUDIOWAVE lpWave) {
 
     if (lpWave != NULL) {
         nErrorCode = SynthDriver.DestroyAudioData(lpWave);
-        if (lpWave->lpData != NULL)
-            free(lpWave->lpData);
+        free(lpWave->lpData);
         return nErrorCode;
     }
     return AUDIO_ERROR_INVALHANDLE;
@@ -326,7 +325,7 @@ UINT AIAPI ADestroyAudioVoice(HAC hVoice) {
     UINT nVoice;
 
     if ((nVoice = VOICENUM(hVoice)) < nNumVoices) {
-        aVoiceTable[nVoice] = (HAC) NULL;
+        aVoiceTable[nVoice] = 0;
         return AUDIO_ERROR_NONE;
     }
     return AUDIO_ERROR_INVALHANDLE;

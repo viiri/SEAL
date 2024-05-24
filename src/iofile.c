@@ -72,13 +72,6 @@ UINT AIAPI AIOReadLong(LPDWORD lpData) {
     return AUDIO_ERROR_NONE;
 }
 
-/* big-endian input routines */
-UINT AIAPI AIOReadCharM(LPBYTE lpData) {
-    if (fread(lpData, 1, sizeof(BYTE), lpStream) != sizeof(BYTE))
-        memset(lpData, 0, sizeof(BYTE));
-    return AUDIO_ERROR_NONE;
-}
-
 UINT AIAPI AIOReadShortM(LPWORD lpData) {
     if (fread(lpData, 1, sizeof(WORD), lpStream) != sizeof(WORD))
         memset(lpData, 0, sizeof(WORD));

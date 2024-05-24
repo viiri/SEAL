@@ -191,13 +191,13 @@ UINT AIAPI ALoadModuleMOD(LPSTR lpszFileName,
         AIOReadFile(Header.aSampleTable[n].aSampleName,
                     sizeof(Header.aSampleTable[n].aSampleName));
         AIOReadShortM(&Header.aSampleTable[n].wLength);
-        AIOReadCharM(&Header.aSampleTable[n].nFinetune);
-        AIOReadCharM(&Header.aSampleTable[n].nVolume);
+        AIOReadChar(&Header.aSampleTable[n].nFinetune);
+        AIOReadChar(&Header.aSampleTable[n].nVolume);
         AIOReadShortM(&Header.aSampleTable[n].wLoopStart);
         AIOReadShortM(&Header.aSampleTable[n].wLoopLength);
     }
-    AIOReadCharM(&Header.nSongLength);
-    AIOReadCharM(&Header.nRestart);
+    AIOReadChar(&Header.nSongLength);
+    AIOReadChar(&Header.nRestart);
     AIOReadFile(Header.aOrderTable, sizeof(Header.aOrderTable));
     AIOReadFile(Header.aMagic, sizeof(Header.aMagic));
     for (n = 0; n < sizeof(aFmtTable) / sizeof(aFmtTable[0]); n++) {

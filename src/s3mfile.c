@@ -106,7 +106,7 @@ static LONG S3MGetRelativeNote(LONG dwSampleRate) {
      * between 522 and 65535 Hertz. (Thanks Zed!)
      */
     dwSampleRate = (dwSampleRate << (ACC + 4)) / 8363;
-    dwRelativeNote = -48L << ACC;
+    dwRelativeNote = (DWORD) ~47L << ACC;
     while (dwSampleRate > (2L << ACC)) {
         dwSampleRate = (dwSampleRate + 1) >> 1;
         dwRelativeNote += (12L << ACC);

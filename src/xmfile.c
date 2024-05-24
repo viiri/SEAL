@@ -282,9 +282,7 @@ UINT AIAPI ALoadModuleXM(LPSTR lpszFileName,
         if (Patch.nPanningPoints > AUDIO_MAX_POINTS)
             Patch.nPanningPoints = AUDIO_MAX_POINTS;
 
-        if (Patch.nSamples > AUDIO_MAX_SAMPLES ||
-            Patch.nVolumePoints > AUDIO_MAX_POINTS ||
-            Patch.nPanningPoints > AUDIO_MAX_POINTS) {
+        if (Patch.nSamples > AUDIO_MAX_SAMPLES) {
             AFreeModuleFile(lpModule);
             AIOCloseFile();
             return AUDIO_ERROR_BADFILEFORMAT;

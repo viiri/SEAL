@@ -912,7 +912,7 @@ static VOID ExecVolumeCmd(LPTRACK lpTrack) {
                 lpTrack->nPanning = AUDIO_MAX_PANNING;
             lpTrack->bControl |= AUDIO_CTRL_PANNING;
         }
-    } else if (nCommand >= 0xF0 && nCommand <= 0xFF) {
+    } else if (nCommand >= 0xF0) {
         /* tone portamento */
         if (Player.nFrame)
             OnTonePorta(lpTrack);
@@ -1474,10 +1474,9 @@ UINT AIAPI AFreeModuleFile(LPAUDIOMODULE lpModule) {
 
     if (lpModule != NULL) {
         if ((lpPattern = lpModule->aPatternTable) != NULL) {
-            for (n = 0; n < lpModule->nPatterns; n++, lpPattern++) {
-                if (lpPattern->lpData != NULL)
-                    free(lpPattern->lpData);
-            }
+            for (n = 0; n < lpModule->nPatterns; n++, lpPattern++)
+                free(lpPattern->lpData);
+
             free(lpModule->aPatternTable);
         }
         if ((lpPatch = lpModule->aPatchTable) != NULL) {

@@ -29,20 +29,24 @@ extern "C" {
 
 #ifndef WINAPI
 
-/* atomic data types definitions */
+    #include <stdint.h>
+
+    /* atomic data types definitions */
     typedef void            VOID;
     typedef char            CHAR;
-    typedef int             INT;
-    typedef long            LONG;
-    typedef int             BOOL;
+    typedef int16_t         SHORT;
+    typedef int16_t         INT;
+    typedef int32_t         LONG;
+    typedef int16_t         BOOL;
 
-    typedef unsigned char   BYTE;
-    typedef unsigned short  WORD;
-    typedef unsigned int    UINT;
-    typedef unsigned long   DWORD;
+    typedef uint8_t         BYTE;
+    typedef uint16_t        WORD;
+    typedef uint16_t        UINT;
+    typedef uint32_t        DWORD;
 
     typedef VOID*           LPVOID;
     typedef CHAR*           LPCHAR;
+    typedef SHORT*          LPSHORT;
     typedef INT*            LPINT;
     typedef LONG*           LPLONG;
     typedef BOOL*           LPBOOL;
@@ -156,6 +160,7 @@ extern "C" {
 #define AUDIO_PRODUCT_BEOSR3            0x0107
 #define AUDIO_PRODUCT_BEOS              0x0108
 #define AUDIO_PRODUCT_QNX               0x0109
+#define AUDIO_PRODUCT_SDL               0x0200
 
 /* audio mixer channels */
 #define AUDIO_MIXER_MASTER_VOLUME       0x0001
@@ -201,7 +206,7 @@ extern "C" {
 /* audio waveform structure */
     typedef struct {
 	LPBYTE  lpData;                             /* data pointer */
-	DWORD   dwHandle;                           /* waveform handle */
+    LPDWORD dwHandle;                           /* waveform handle */
 	DWORD   dwLength;                           /* waveform length */
 	DWORD   dwLoopStart;                        /* loop start point */
 	DWORD   dwLoopEnd;                          /* loop end point */
@@ -298,7 +303,7 @@ extern "C" {
     typedef VOID (AIAPI* LPFNAUDIOCALLBACK)(BYTE, UINT, UINT);
 
 /* audio handle defines */
-    typedef HANDLE  HAC;
+    typedef UINT    HAC;
     typedef HAC*    LPHAC;
 
 #pragma pack()

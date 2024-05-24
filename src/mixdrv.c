@@ -78,9 +78,6 @@ LPBYTE lpFilterTable;
 
 static VOID AIAPI UpdateVoices(LPBYTE lpData, UINT nCount);
 
-typedef short SHORT;
-typedef SHORT *LPSHORT;
-
 static VOID QuantAudioData(LPVOID lpBuffer, LPLONG lpData, UINT nCount) {
     LPSHORT lpwBuffer;
     LPBYTE lpbBuffer;
@@ -104,7 +101,7 @@ static VOID QuantAudioData(LPVOID lpBuffer, LPLONG lpData, UINT nCount) {
                 dwSample = -32768;
             else if (dwSample > +32767)
                 dwSample = +32767;
-            *lpbBuffer++ = (BYTE) ((dwSample >> 8) + 128);
+            *lpbBuffer++ = (BYTE) (((DWORD)dwSample >> 8) + 128);
         }
     }
 }
@@ -179,7 +176,7 @@ MixAudioData08MI(LPLONG lpBuffer, UINT nCount, LPVOICE lpVoice) {
 
 #ifdef __FILTER__
     a = (BYTE) lpVoice->bReserved;
-    frac = ((long) delta < 0 ? -delta : +delta) >> (ACCURACY - 5);
+    frac = ((LONG) delta < 0 ? -(LONG) delta : +delta) >> (ACCURACY - 5);
     ftable = lpFilterTable + (frac << 8);
     do {
         a = (BYTE) (a + ftable[data[accum >> ACCURACY]] - ftable[a]);
@@ -226,7 +223,7 @@ MixAudioData08SI(LPLONG lpBuffer, UINT nCount, LPVOICE lpVoice) {
 
 #ifdef __FILTER__
     a = (BYTE) lpVoice->bReserved;
-    frac = ((long) delta < 0 ? -delta : +delta) >> (ACCURACY - 5);
+    frac = ((LONG) delta < 0 ? -(LONG) delta : +delta) >> (ACCURACY - 5);
     ftable = lpFilterTable + (frac << 8);
     do {
         a = (BYTE) (a + ftable[data[accum >> ACCURACY]] - ftable[a]);
@@ -504,7 +501,7 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo) {
     Synth.lpMemory = malloc(sizeof(LONG) * 65 * 256 +
                             sizeof(BYTE) * 32 * 256 + 1023);
     if (Synth.lpMemory != NULL) {
-        lpVolumeTable = (LPLONG) (((DWORD) Synth.lpMemory + 1023) & ~1023);
+        lpVolumeTable = (LPLONG) Synth.lpMemory;
         lpFilterTable = (LPBYTE) (lpVolumeTable + 65 * 256);
         ASetAudioMixerValue(AUDIO_MIXER_MASTER_VOLUME, 96);
         ASetAudioCallback(UpdateVoices);
@@ -514,8 +511,7 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo) {
 }
 
 static UINT AIAPI CloseAudio(VOID) {
-    if (Synth.lpMemory != NULL)
-        free(Synth.lpMemory);
+    free(Synth.lpMemory);
     memset(&Synth, 0, sizeof(Synth));
     return AUDIO_ERROR_NONE;
 }
@@ -599,7 +595,7 @@ static LONG AIAPI GetAudioDataAvail(VOID) {
 
 static UINT AIAPI CreateAudioData(LPAUDIOWAVE lpWave) {
     if (lpWave != NULL) {
-        lpWave->dwHandle = (DWORD) lpWave->lpData;
+        lpWave->dwHandle = (LPDWORD) lpWave->lpData;
         return AUDIO_ERROR_NONE;
     }
     return AUDIO_ERROR_INVALHANDLE;
@@ -616,10 +612,10 @@ static UINT AIAPI WriteAudioData(LPAUDIOWAVE lpWave, DWORD dwOffset, UINT nCount
     if (lpWave != NULL && lpWave->dwHandle != 0) {
         /* anticlick removal work around */
         if (lpWave->wFormat & AUDIO_FORMAT_LOOP) {
-            *(LPDWORD) (lpWave->dwHandle + lpWave->dwLoopEnd) =
-                    *(LPDWORD) (lpWave->dwHandle + lpWave->dwLoopStart);
+            *(LPDWORD) ((LPBYTE) lpWave->dwHandle + lpWave->dwLoopEnd) =
+                    *(LPDWORD) ((LPBYTE) lpWave->dwHandle + lpWave->dwLoopStart);
         } else if (dwOffset + nCount >= lpWave->dwLength) {
-            *(LPDWORD) (lpWave->dwHandle + lpWave->dwLength) = 0;
+            *(LPDWORD) ((LPBYTE) lpWave->dwHandle + lpWave->dwLength) = 0;
         }
         return AUDIO_ERROR_NONE;
     }
