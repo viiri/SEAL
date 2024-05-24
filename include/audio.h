@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#ifndef WIN32
+#ifndef __WINDOWS__
 #define AIAPI
 #else
 #define AIAPI __stdcall

@@ -395,13 +395,8 @@ UINT AIAPI AGetVoiceStatus(HAC hVoice, LPBOOL lpnStatus) {
 /*
  * External system-dependant audio device drivers
  */
-#ifdef __LINUX__
-extern AUDIODRIVER LinuxDriver;
-#endif
-#ifdef __WINDOWS__
-extern AUDIODRIVER WindowsDriver;
-extern AUDIODRIVER DirectSoundDriver;
-extern AUDIODRIVER DirectSoundAccelDriver;
+#ifdef __SDL2__
+extern AUDIODRIVER SDL2Driver;
 #endif
 
 UINT AIAPI AGetVersion(VOID) {
@@ -418,13 +413,8 @@ UINT AIAPI AInitialize(VOID) {
         return AUDIO_ERROR_NOTSUPPORTED;
 
     ARegisterAudioDriver(&NoneDriver);
-#ifdef __LINUX__
-    ARegisterAudioDriver(&LinuxDriver);
-#endif
-#ifdef __WINDOWS__
-    ARegisterAudioDriver(&WindowsDriver);
-    ARegisterAudioDriver(&DirectSoundAccelDriver);
-    ARegisterAudioDriver(&DirectSoundDriver);
+#ifdef __SDL2__
+    ARegisterAudioDriver(&SDL2Driver);
 #endif
 
     return AAudioFatalError(AUDIO_ERROR_NONE);

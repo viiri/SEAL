@@ -31,31 +31,23 @@ target_sources(seal PRIVATE
         src/xmfile.c
 )
 
+find_package(SDL2)
+
+if(SDL2_FOUND)
+    target_compile_definitions(seal PUBLIC "__SDL2__")
+    target_sources(seal PRIVATE src/sdldrv.c)
+    target_link_libraries(seal SDL2::SDL2)
+endif()
+
 if(UNIX AND NOT APPLE)
     target_compile_definitions(seal PUBLIC "__LINUX__")
-    target_sources(seal PRIVATE src/lnxdrv.c)
 endif()
 
 if(WIN32)
-    target_compile_definitions(seal PUBLIC
-            "WIN32"
-            "__WINDOWS__"
-            "__FLAT__"
-            "__MSC__"
-    )
-    target_sources(seal PRIVATE
-            src/dsdrv.c
-            src/dsdrv2.c
-            src/windrv.c
-    )
-
+    target_compile_definitions(seal PUBLIC "__WINDOWS__")
     if(BUILD_SHARED_LIBS)
         set_target_properties(seal PROPERTIES OUTPUT_NAME audiow32)
-        target_sources(seal PRIVATE src/audiow32.def)
-        target_sources(seal PRIVATE src/audiow32.c)
     endif()
-
-    target_link_libraries(seal winmm.lib)
 endif()
 
 if(SEAL_BUILD_MP)

@@ -109,9 +109,7 @@ VOID TestTimerServices(VOID)
 {
     InitTimerHandler();
     do {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         fprintf(stderr, "Elapsed: %2.2f secs\r", nTickCounter / 50.0F);
     } while (nTickCounter < 2*50);
     DoneTimerHandler();
@@ -129,9 +127,7 @@ VOID PlayWaveform(LPAUDIOWAVE lpWave)
     Assert(ASetVoicePanning(hVoice, 128));
     printf("press any key to stop\n");
     while (!kbhit()) {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         Assert(AGetVoiceStatus(hVoice, &stopped));
         if (stopped) break;
     }
@@ -181,9 +177,7 @@ VOID TestPlayChord(VOID)
     printf("press any key to stop\n");
     InitTimerHandler();
     while (!kbhit()) {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         /* play chord two times per second */
         if (nTickCounter >= 25) {
             PlayChord(aVoices, lpWave, aFreqs);
@@ -227,9 +221,7 @@ VOID TestPlayEcho(VOID)
     printf("press any key to stop\n");
     InitTimerHandler();
     while (!kbhit()) {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         /* play voices two times per second */
         if (nTickCounter >= 25) {
             PlayEchoVoices(aVoices, lpWave, 800);
@@ -274,9 +266,7 @@ VOID TestPlayStereoEnh(VOID)
     printf("press any key to stop\n");
     InitTimerHandler();
     while (!kbhit()) {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         /* play voices two times per second */
         if (nTickCounter >= 25) {
             PlayVoiceStereo(aVoices, lpWave, 100);
@@ -332,9 +322,7 @@ VOID TestCreateAudioData(VOID)
     printf("press any key to stop\n");
     InitTimerHandler();
     while (!kbhit()) {
-        #ifndef WIN32
         Assert(AUpdateAudio());
-        #endif
         /* play voices two times per second */
         if (nTickCounter >= 25) {
             Assert(APlayVoice(hVoice, lpWave));
@@ -390,9 +378,7 @@ VOID StreamData8BitMono(FILE *stream, HAC hVoice, LPAUDIOWAVE lpWave)
             if (dwOffset + nChunkSize > lpWave->dwLength)
                 nChunkSize = lpWave->dwLength - dwOffset;
             for (;;) {
-                #ifndef WIN32
                 Assert(AUpdateAudio());
-                #endif
                 Assert(AGetVoicePosition(hVoice, &dwVoicePosition));
                 if (dwOffset + nChunkSize > lpWave->dwLength) {
                     if (dwVoicePosition < dwOffset &&
@@ -450,9 +436,7 @@ VOID TestAudioStream(VOID)
 
 void main(void)
 {
-    #ifndef WIN32
     AInitialize();
-    #endif
 
     printf("------------ DetectAudioDevice() ------------\n");
     DetectAudioDevice();

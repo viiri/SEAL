@@ -42,7 +42,7 @@ void Assert(UINT nErrorCode)
     }
 }
 
-#ifdef __MSC__
+#ifdef __WINDOWS__
 void __cdecl CleanUp(void)
 #else
     void CleanUp(void)
@@ -60,16 +60,8 @@ void Banner(void)
 #endif
 
 /* Win32 */
-#if defined(__WINDOWS__)
-#ifdef __BORLANDC__
-#define _SYSTEM_ "Win32/BC32"
-#endif
-#ifdef __WATCOMC__
-#define _SYSTEM_ "Win32/WC32"
-#endif
-#ifdef __MSC__
-#define _SYSTEM_ "Win32/MSC32"
-#endif
+#ifdef __WINDOWS__
+#define _SYSTEM_ "Win32"
 #endif
 
 #ifndef _SYSTEM_
