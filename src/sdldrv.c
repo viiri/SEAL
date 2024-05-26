@@ -79,11 +79,18 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
     audiospec.samples = BUFFERSIZE;
     audiospec.callback = UpdateAudioCallback;
 
+#ifdef __WINDOWS__
+    if (SDL_OpenAudio(&audiospec, NULL) < 0)
+        return AUDIO_ERROR_BADFORMAT;
+
+    SDL_PauseAudio(0);
+#else
     Audio.devId = SDL_OpenAudioDevice(NULL, 0, &audiospec, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (Audio.devId == 0)
         return AUDIO_ERROR_BADFORMAT;
 
     SDL_PauseAudioDevice(Audio.devId, 0);
+#endif
 
     Audio.wFormat = lpInfo->wFormat;
     return AUDIO_ERROR_NONE;
@@ -91,7 +98,11 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
 
 static UINT AIAPI CloseAudio(VOID)
 {
+#ifdef __WINDOWS__
+    SDL_CloseAudio();
+#else
     SDL_CloseAudioDevice(Audio.devId);
+#endif
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
     return AUDIO_ERROR_NONE;
 }

@@ -1,6 +1,6 @@
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.20)
 project("SEAL" VERSION 1.0.7 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
@@ -47,6 +47,7 @@ if(WIN32)
     target_compile_definitions(seal PUBLIC "__WINDOWS__")
     if(BUILD_SHARED_LIBS)
         set_target_properties(seal PROPERTIES OUTPUT_NAME audiow32)
+        target_sources(seal PRIVATE src/audiow32.def)
     endif()
 endif()
 

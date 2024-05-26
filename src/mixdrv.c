@@ -56,7 +56,7 @@ typedef struct {
 /*
  * Low level voice mixing routine prototype
  */
-typedef VOID (cdecl *LPFNMIXAUDIO)(LPLONG, UINT, LPVOICE);
+typedef VOID (AIAPI *LPFNMIXAUDIO)(LPLONG, UINT, LPVOICE);
 
 /*
  * Waveform synthesizer state structure
