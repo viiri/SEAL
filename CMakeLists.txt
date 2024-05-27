@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD 99)
 
 option(SEAL_SHARED_LIBS "Build using shared libraries" ON)
 option(SEAL_BUILD_MP "Build module player" ON)
+option(SEAL_BUILD_EXAMPLES "Build examples" ON)
 
 if(DEFINED SEAL_SHARED_LIBS)
     set(BUILD_SHARED_LIBS "${SEAL_SHARED_LIBS}")
@@ -55,4 +56,8 @@ if(SEAL_BUILD_MP)
     add_executable(mp)
     target_sources(mp PRIVATE src/mp.c)
     target_link_libraries(mp seal)
+endif()
+
+if(SEAL_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
