@@ -1,7 +1,4 @@
 LIBRARY         audiow32
-DESCRIPTION     'Audio Library 1.07 for Win32'
-CODE            PRELOAD MOVEABLE DISCARDABLE
-DATA            PRELOAD MOVEABLE
 EXPORTS         AInitialize             @100
                 AGetVersion             @101
                 AGetAudioNumDevs        @102
