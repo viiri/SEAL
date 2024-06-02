@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(examples)
+project(seal-examples)
 
 set(CMAKE_C_STANDARD 99)
 
@@ -9,4 +9,6 @@ foreach(i RANGE 1 6)
     target_link_libraries("example${i}" seal)
 endforeach()
 
-target_link_libraries("example6" m)
+if(NOT MSVC)
+    target_link_libraries("example6" m)
+endif()

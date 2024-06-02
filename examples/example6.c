@@ -1,5 +1,7 @@
 /* example6.c - play a streamed sample (sine wave) using triple buffering */
 
+#define _USE_MATH_DEFINES
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +22,7 @@ int main(void)
     HAC voice;
     int i;
     float t, dt;
-    long position, chunkSize, chunkPosition;
+    LONG position, chunkSize, chunkPosition;
 
     /* initialize library */
     AInitialize();
