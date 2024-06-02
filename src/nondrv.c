@@ -255,7 +255,7 @@ static UINT AIAPI GetVoicePanning(UINT nVoice, LPUINT lpnPanning) {
 static UINT AIAPI GetVoiceStatus(UINT nVoice, LPBOOL lpnStatus) {
     if (nVoice < AUDIO_MAX_VOICES) {
         if (lpnStatus != NULL) {
-            *lpnStatus = 1;
+            *lpnStatus = true;
             return AUDIO_ERROR_NONE;
         }
         return AUDIO_ERROR_INVALPARAM;

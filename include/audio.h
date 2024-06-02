@@ -30,18 +30,19 @@ extern "C" {
 #ifndef WINAPI
 
     #include <stdint.h>
+    #include <stdbool.h>
 
     /* atomic data types definitions */
     typedef void            VOID;
     typedef char            CHAR;
     typedef int16_t         SHORT;
-    typedef int16_t         INT;
+    typedef int32_t         INT;
     typedef int32_t         LONG;
-    typedef int16_t         BOOL;
+    typedef bool            BOOL;
 
     typedef uint8_t         BYTE;
     typedef uint16_t        WORD;
-    typedef uint16_t        UINT;
+    typedef uint32_t        UINT;
     typedef uint32_t        DWORD;
 
     typedef VOID*           LPVOID;
@@ -206,7 +207,7 @@ extern "C" {
 /* audio waveform structure */
     typedef struct {
 	LPBYTE  lpData;                             /* data pointer */
-    LPDWORD dwHandle;                           /* waveform handle */
+	LPDWORD dwHandle;                           /* waveform handle */
 	DWORD   dwLength;                           /* waveform length */
 	DWORD   dwLoopStart;                        /* loop start point */
 	DWORD   dwLoopEnd;                          /* loop end point */
