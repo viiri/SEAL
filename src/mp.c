@@ -28,6 +28,7 @@ struct {
     AUDIOCAPS Caps;
     LPAUDIOMODULE lpModule;
     UINT nVolume;
+    UINT nOrder;
     BOOL bStopped;
 } State;
 
@@ -108,11 +109,12 @@ int main(int argc, char *argv[])
     State.Info.wFormat = AUDIO_FORMAT_16BITS | AUDIO_FORMAT_STEREO;
     State.Info.nSampleRate = 44100;
     State.nVolume = 96;
+    State.nOrder = 0;
 
     /* parse command line options */
     for (n = 1; n < argc && (lpszOption = argv[n])[0] == '-'; n++) {
         lpszOptArg = &lpszOption[2];
-        if (strchr("crv", lpszOption[1]) && !lpszOptArg[0] && n < argc - 1)
+        if (strchr("crov", lpszOption[1]) && !lpszOptArg[0] && n < argc - 1)
             lpszOptArg = argv[++n];
         switch (lpszOption[1]) {
         case 'c':
@@ -126,6 +128,9 @@ int main(int argc, char *argv[])
             break;
         case 'i':
             State.Info.wFormat |= AUDIO_FORMAT_FILTER;
+            break;
+        case 'o':
+            State.nOrder = atoi(lpszOptArg);;
             break;
         case 'r':
             State.Info.nSampleRate = (UINT) atoi(lpszOptArg);
@@ -156,11 +161,14 @@ int main(int argc, char *argv[])
         /* load module file from disk */
         printf("Loading: %s\n", lpszFileName);
         Assert(ALoadModuleFile(lpszFileName, &State.lpModule, 0L));
+        if(State.nOrder > State.lpModule->nOrders)
+            State.nOrder = State.lpModule->nOrders;
 
         /* play the module file */
         printf("Playing: %s\n", State.lpModule->szModuleName);
         Assert(AOpenVoices(State.lpModule->nTracks));
         Assert(APlayModule(State.lpModule));
+        Assert(ASetModulePosition(State.nOrder, 0));
         Assert(ASetAudioMixerValue(AUDIO_MIXER_MASTER_VOLUME, State.nVolume));
 #if defined(__WINDOWS__)
         printf("Press enter to quit\n");
