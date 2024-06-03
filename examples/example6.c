@@ -3,7 +3,6 @@
 #define _USE_MATH_DEFINES
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <audio.h>
@@ -21,7 +20,7 @@ int main(void)
     AUDIOWAVE wave;
     HAC voice;
     int i;
-    float t, dt;
+    double t, dt;
     LONG position, chunkSize, chunkPosition;
 
     /* initialize library */
@@ -63,7 +62,7 @@ int main(void)
     t = 0.0;
     dt = 2.0 * M_PI * 200.0 / wave.nSampleRate;
 
-    printf("%d-bit %s %u Hz, buffer size = %ld, chunk size = %ld\n",
+    printf("%d-bit %s %u Hz, buffer size = %d, chunk size = %d\n",
            info.wFormat & AUDIO_FORMAT_16BITS ? 16 : 8,
            info.wFormat & AUDIO_FORMAT_STEREO ? "stereo" : "mono",
            info.nSampleRate, wave.dwLength, chunkSize);
