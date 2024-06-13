@@ -16,13 +16,6 @@
 #include <string.h>
 #include "audio.h"
 
-#if defined(__WINDOWS__)
-#include <conio.h>
-#else
-#define kbhit() 0
-#endif
-
-
 struct {
     AUDIOINFO Info;
     AUDIOCAPS Caps;
@@ -170,16 +163,10 @@ int main(int argc, char *argv[])
         Assert(APlayModule(State.lpModule));
         Assert(ASetModulePosition(State.nOrder, 0));
         Assert(ASetAudioMixerValue(AUDIO_MIXER_MASTER_VOLUME, State.nVolume));
-#if defined(__WINDOWS__)
+
         printf("Press enter to quit\n");
         getchar();
-#else
-        while (!kbhit()) {
-            Assert(AGetModuleStatus(&State.bStopped));
-            if (State.bStopped) break;
-            Assert(AUpdateAudio());
-	}
-#endif
+
         Assert(AStopModule());
         Assert(ACloseVoices());
 
