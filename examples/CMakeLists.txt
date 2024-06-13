@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(seal-examples)
+project(seal-examples LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 
