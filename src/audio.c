@@ -28,6 +28,10 @@ CHAR szAudioCopyright[] =
 CHAR szSDL2AudioCopyright[] =
         "SDL2 Audio Driver Copyright (C) 2024 by Sergei \"x0r\" Kolzun";
 #endif
+#ifdef __MINIAUDIO__
+CHAR szMiniAudioCopyright[] =
+        "miniaudio Driver Copyright (C) 2024 by Sergei \"x0r\" Kolzun";
+#endif
 
 /*
  * Audio device drivers resource limits
@@ -398,6 +402,9 @@ UINT AIAPI AGetVoiceStatus(HAC hVoice, LPBOOL lpnStatus) {
 /*
  * External system-dependant audio device drivers
  */
+#ifdef __MINIAUDIO__
+extern AUDIODRIVER miniaudioDriver;
+#endif
 #ifdef __SDL2__
 extern AUDIODRIVER SDL2Driver;
 #endif
@@ -416,6 +423,9 @@ UINT AIAPI AInitialize(VOID) {
         return AUDIO_ERROR_NOTSUPPORTED;
 
     ARegisterAudioDriver(&NoneDriver);
+#ifdef __MINIAUDIO__
+    ARegisterAudioDriver(&miniaudioDriver);
+#endif
 #ifdef __SDL2__
     ARegisterAudioDriver(&SDL2Driver);
 #endif

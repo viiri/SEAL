@@ -136,32 +136,9 @@ extern "C" {
 
 /* audio product identifiers */
 #define AUDIO_PRODUCT_NONE              0x0000
-#define AUDIO_PRODUCT_SB                0x0001
-#define AUDIO_PRODUCT_SB15              0x0002
-#define AUDIO_PRODUCT_SB20              0x0003
-#define AUDIO_PRODUCT_SBPRO             0x0004
-#define AUDIO_PRODUCT_SB16              0x0005
-#define AUDIO_PRODUCT_AWE32             0x0006
-#define AUDIO_PRODUCT_WSS               0x0007
-#define AUDIO_PRODUCT_ESS               0x0008
-#define AUDIO_PRODUCT_GUS               0x0009
-#define AUDIO_PRODUCT_GUSDB             0x000A
-#define AUDIO_PRODUCT_GUSMAX            0x000B
-#define AUDIO_PRODUCT_IWAVE             0x000C
-#define AUDIO_PRODUCT_PAS               0x000D
-#define AUDIO_PRODUCT_PAS16             0x000E
-#define AUDIO_PRODUCT_ARIA              0x000F
 #define AUDIO_PRODUCT_WINDOWS           0x0100
-#define AUDIO_PRODUCT_LINUX             0x0101
-#define AUDIO_PRODUCT_SPARC             0x0102
-#define AUDIO_PRODUCT_SGI               0x0103
-#define AUDIO_PRODUCT_DSOUND            0x0104
-#define AUDIO_PRODUCT_OS2MMPM           0x0105
-#define AUDIO_PRODUCT_OS2DART           0x0106
-#define AUDIO_PRODUCT_BEOSR3            0x0107
-#define AUDIO_PRODUCT_BEOS              0x0108
-#define AUDIO_PRODUCT_QNX               0x0109
 #define AUDIO_PRODUCT_SDL               0x0200
+#define AUDIO_PRODUCT_MINIAUDIO         0x0201
 
 /* audio mixer channels */
 #define AUDIO_MIXER_MASTER_VOLUME       0x0001

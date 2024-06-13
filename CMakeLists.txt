@@ -8,6 +8,8 @@ include(GNUInstallDirs)
 string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" is_top_level)
 
 option(SEAL_SHARED_LIBS "Build using shared libraries" ON)
+option(SEAL_DRV_SDL2 "Build SDL2 Audio driver" OFF)
+option(SEAL_DRV_MINIAUDIO "Build miniaudio driver" ON)
 option(SEAL_BUILD_MP "Build module player" ON)
 option(SEAL_BUILD_EXAMPLES "Build examples" ON)
 option(SEAL_INSTALL "Generate target for install" ${is_top_level})
@@ -42,12 +44,19 @@ target_sources(seal PRIVATE
     src/xmfile.c
 )
 
-find_package(SDL2)
+if(SEAL_DRV_MINIAUDIO)
+    target_compile_definitions(seal PUBLIC "__MINIAUDIO__")
+    target_sources(seal PRIVATE src/madrv.c)
+    target_link_libraries(seal PRIVATE m)
+endif()
 
-if(SDL2_FOUND)
-    target_compile_definitions(seal PUBLIC "__SDL2__")
-    target_sources(seal PRIVATE src/sdldrv.c)
-    target_link_libraries(seal PRIVATE SDL2::SDL2)
+if(SEAL_DRV_SDL2)
+    find_package(SDL2 REQUIRED)
+    if(SDL2_FOUND)
+        target_compile_definitions(seal PUBLIC "__SDL2__")
+        target_sources(seal PRIVATE src/sdldrv.c)
+        target_link_libraries(seal PRIVATE SDL2::SDL2)
+    endif()
 endif()
 
 if(UNIX AND NOT APPLE)
