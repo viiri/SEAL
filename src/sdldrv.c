@@ -11,11 +11,10 @@
  * (at your option) any later version.
  */
 
-#include <string.h>
+#include <SDL.h>
+
 #include "audio.h"
 #include "drivers.h"
-
-#include <SDL.h>
 
 #define BUFFERSIZE      (1 << 12)
 
@@ -24,11 +23,9 @@
  */
 static struct {
     SDL_AudioDeviceID devId;
-    BYTE    aBuffer[BUFFERSIZE];
     LPFNAUDIOWAVE lpfnAudioWave;
     WORD    wFormat;
 } Audio;
-
 
 /*
  * SDL2 Audio driver API interface
@@ -73,6 +70,8 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
     if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
         return AUDIO_ERROR_DEVICEBUSY;
 
+    Audio.wFormat = lpInfo->wFormat;
+
     audiospec.freq = lpInfo->nSampleRate;
     audiospec.format = lpInfo->wFormat & AUDIO_FORMAT_16BITS ? AUDIO_S16 : AUDIO_U8;
     audiospec.channels = lpInfo->wFormat & AUDIO_FORMAT_STEREO ? 2 : 1;
@@ -92,7 +91,6 @@ static UINT AIAPI OpenAudio(LPAUDIOINFO lpInfo)
     SDL_PauseAudioDevice(Audio.devId, 0);
 #endif
 
-    Audio.wFormat = lpInfo->wFormat;
     return AUDIO_ERROR_NONE;
 }
 
