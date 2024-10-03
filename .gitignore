@@ -4,5 +4,6 @@
 
 /.vs
 /.idea
-/out/build
 /CMakeSettings.json
+/.PVS-Studio/
+/out/

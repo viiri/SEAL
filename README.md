@@ -6,6 +6,8 @@ OS/2 Sound Driver Copyright (C) 1998 Martin Amodeo
 
 SDL2 Audio Driver Copyright (C) 2024 Sergei "x0r" Kolzun
 
+miniaudio Driver Copyright (C) 2024 Sergei "x0r" Kolzun
+
 ---
 
 This repository is an SDL port of the original SEAL source code for modern systems.
